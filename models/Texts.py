@@ -13,6 +13,7 @@ class TextModel(db.Model):
         return {
             'id': self.id,
             'content': self.content,
+            'hasFile': self.file is not None,
             'sectionId': self.sectionId,
             'created_at': self.created_at.isoformat()
         }
