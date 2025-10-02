@@ -17,7 +17,7 @@ post_model = ns.model('Post', {
 class Posts(Resource):
     def get(self):
         return [
-            post.json() for post in PostModel.query.all()
+            post.json() for post in PostModel.query.order_by(PostModel.created_at.desc()).all()
         ]
     
     @jwt_required()
