@@ -13,6 +13,20 @@ post_model = ns.model('Post', {
     'created_at': fields.DateTime(readonly=True, description='The post creation date')
 })
 
+@ns.route('/<int:page>')
+class Posts(Resource):
+    def get(self, page):
+        previous = (page*6)-6
+        next = page*6
+        return [
+            post.json() for post in PostModel.query.order_by(PostModel.created_at.desc()).all()[previous:next]
+        ]
+    
+@ns.route('/count')
+class Posts(Resource):
+    def get(self):
+        return len(PostModel.query.all())
+    
 @ns.route('/')
 class Posts(Resource):
     def get(self):
