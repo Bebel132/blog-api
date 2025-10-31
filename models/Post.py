@@ -7,6 +7,7 @@ class PostModel(db.Model):
     title = db.Column(db.String(100), nullable=False)
     creator = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'), nullable=True)
     created_at = db.Column(db.DateTime, nullable=False, default=db.func.now())
+    is_draft = db.Column(db.Boolean, nullable=False, default=True,)
 
     sections = db.relationship('SectionModel', backref='post', cascade='all, delete-orphan', passive_deletes=True)
 
@@ -15,5 +16,6 @@ class PostModel(db.Model):
             'id': self.id,
             'title': self.title,
             'creator': self.creator_user.username if self.creator_user else None,
-            'created_at': self.created_at.isoformat()
+            'created_at': self.created_at.isoformat(),
+            'is_draft': self.is_draft
         }

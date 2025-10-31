@@ -11,6 +11,7 @@ from resourses.Post import ns as ns_post
 from resourses.Section import ns as ns_section
 from resourses.Text import ns as ns_text
 from resourses.Auth import ns as ns_auth
+from resourses.Publish import ns as ns_publish
 
 load_dotenv()
 
@@ -48,6 +49,7 @@ api.add_namespace(ns_post)
 api.add_namespace(ns_section)
 api.add_namespace(ns_text)
 api.add_namespace(ns_auth)
+api.add_namespace(ns_publish)
 
 with app.app_context():
     db.create_all()

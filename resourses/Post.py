@@ -19,7 +19,7 @@ class Posts(Resource):
         previous = (page*6)-6
         next = page*6
         return [
-            post.json() for post in PostModel.query.order_by(PostModel.created_at.desc()).all()[previous:next]
+            post.json() for post in PostModel.query.filter_by(is_draft=False).order_by(PostModel.created_at.desc()).all()[previous:next]
         ]
     
 @ns.route('/count')
@@ -27,13 +27,16 @@ class Posts(Resource):
     def get(self):
         return len(PostModel.query.all())
     
-@ns.route('/')
+@ns.route('/all/<int:creatorId>')
 class Posts(Resource):
-    def get(self):
+    @jwt_required()
+    def get(self, creatorId):
         return [
-            post.json() for post in PostModel.query.order_by(PostModel.created_at.desc()).all()
+            post.json() for post in PostModel.query.filter_by(creator=creatorId).order_by(PostModel.created_at.desc()).all()
         ]
     
+@ns.route('/')
+class Posts(Resource):
     @jwt_required()
     @ns.expect(post_model)  
     def post(self):
@@ -48,12 +51,6 @@ class Posts(Resource):
         db.session.add(new_post)
         db.session.commit()
         return new_post.json(), 201
-    
-@ns.route('/<int:creatorId>')
-class PostsByCreator(Resource):
-    def get(self, creatorId):
-        posts = PostModel.query.filter_by(creator=creatorId).all()
-        return [post.json() for post in posts]
 
 @ns.route('/<int:id>')
 class Post(Resource):
