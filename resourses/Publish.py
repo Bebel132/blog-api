@@ -14,6 +14,7 @@ class Publish(Resource):
     def post(self, postId):
         post = PostModel.query.get_or_404(postId)
         post.is_draft = False
+        post.published_at = db.func.now()
 
         for section in SectionModel.query.filter_by(postId=post.id).all():
             section.is_draft = False
