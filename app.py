@@ -25,7 +25,11 @@ app.config["JWT_REFRESH_TOKEN_EXPIRES"] = timedelta(days=30)
 db.init_app(app)
 migrate = Migrate(app, db)
 
-CORS(app)
+CORS(
+    app,
+    resources={r"/*": {"origins": "*"}},
+    expose_headers=["X-Image-Width", "X-Image-Height"]
+)
 
 authorizations = {
     "Bearer Auth": {

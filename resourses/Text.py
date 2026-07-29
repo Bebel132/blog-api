@@ -17,6 +17,18 @@ upload_parser.add_argument(
     location='files',
     required=True
 )
+upload_parser.add_argument(
+    'fileWidth',
+    type=int,
+    location='form',
+    required=False
+)
+upload_parser.add_argument(
+    'fileHeight',
+    type=int,
+    location='form',
+    required=False
+)
 
 text_model = ns.model('Text', {
     'id': fields.Integer(readonly=True, description='The text unique identifier'),
@@ -75,9 +87,13 @@ class TextUpload(Resource):
         text = TextModel.query.get_or_404(id)
 
         file = request.files['file']
+        file_width = request.form.get('width', type=int)
+        file_height = request.form.get('height', type=int)
 
         file_bytes = file.read()
         text.file = file_bytes
+        text.fileWidth = file_width
+        text.fileHeight = file_height
 
         db.session.commit()
 
@@ -88,9 +104,14 @@ class TextFile(Resource):
     def get(self, id):
         text = TextModel.query.get_or_404(id)
         
-        return send_file(
+        response = send_file(
             io.BytesIO(text.file),
-            mimetype="image/png",  # ou image/jpeg dependendo do tipo
+            mimetype="image/png",
             as_attachment=False,
             download_name=f"text_{id}.png"
         )
+
+        response.headers["X-Image-Width"] = str(text.fileWidth or "")
+        response.headers["X-Image-Height"] = str(text.fileHeight or "")
+
+        return response

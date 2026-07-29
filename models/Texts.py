@@ -7,6 +7,8 @@ class TextModel(db.Model):
     content = db.Column(db.Text, nullable=False)
     sectionId = db.Column(db.Integer, db.ForeignKey('sections.id', ondelete='CASCADE'), nullable=False)
     file = db.Column(db.LargeBinary, nullable=True)
+    fileWidth = db.Column(db.Integer, nullable=True)
+    fileHeight = db.Column(db.Integer, nullable=True)
     created_at = db.Column(db.DateTime, nullable=False, default=db.func.now())
 
     def json(self):
